@@ -8,22 +8,15 @@ namespace ObjectOrientedPractics.Services
     public static class ProjectSerializer
     {
         /// <summary>
-        /// Имя папки с данными приложения.
-        /// </summary>
-        private const string FolderName = "ObjectOrientedPractics";
-
-        /// <summary>
         /// Имя файла с данными проекта.
         /// </summary>
         private const string FileName = "project.json";
 
         /// <summary>
-        /// Возвращает путь к файлу данных по умолчанию
-        /// (папка локальных данных приложений текущего пользователя).
+        /// Возвращает путь к файлу данных в папке запущенного приложения.
         /// </summary>
         public static string DefaultFilePath => Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            FolderName,
+            AppDomain.CurrentDomain.BaseDirectory,
             FileName);
 
         /// <summary>
