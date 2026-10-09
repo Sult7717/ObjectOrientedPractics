@@ -101,7 +101,7 @@ namespace ObjectOrientedPractics.View.Tabs
             // 
             // ItemsListBox
             // 
-            ItemsListBox.Dock = DockStyle.Top;
+            ItemsListBox.Dock = DockStyle.Fill;
             ItemsListBox.FormattingEnabled = true;
             ItemsListBox.IntegralHeight = false;
             ItemsListBox.Location = new Point(3, 24);
@@ -297,7 +297,7 @@ namespace ObjectOrientedPractics.View.Tabs
             // InfoTextBox
             // 
             SelectedItemTableLayoutPanel.SetColumnSpan(InfoTextBox, 2);
-            InfoTextBox.Dock = DockStyle.Top;
+            InfoTextBox.Dock = DockStyle.Fill;
             InfoTextBox.Location = new Point(3, 316);
             InfoTextBox.Margin = new Padding(3, 4, 3, 4);
             InfoTextBox.Multiline = true;
