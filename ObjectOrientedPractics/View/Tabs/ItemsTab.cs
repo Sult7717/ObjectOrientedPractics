@@ -11,11 +11,6 @@ namespace ObjectOrientedPractics.View.Tabs
     public partial class ItemsTab : UserControl
     {
         /// <summary>
-        /// Название товара, которое получает новый товар при нажатии кнопки добавления.
-        /// </summary>
-        private const string DefaultItemName = "New Item";
-
-        /// <summary>
         /// Цвет фона поля ввода с некорректным значением.
         /// </summary>
         private static readonly Color _errorColor = Color.LightPink;
@@ -27,14 +22,19 @@ namespace ObjectOrientedPractics.View.Tabs
 
         /// <summary>
         /// Признак того, что элементы управления обновляются программно,
-        /// а не пользователем (обработчики событий в этом случае ничего не делают).
+        /// а не пользователем.
         /// </summary>
         private bool _isUpdating;
 
         /// <summary>
+        /// Признак режима добавления нового товара: поля справа пусты
+        /// и предназначены для ввода данных нового товара.
+        /// </summary>
+        private bool _isAddingNew;
+
+        /// <summary>
         /// Возвращает или задаёт список товаров, отображаемых на вкладке.
         /// </summary>
-        /// <exception cref="ArgumentNullException">Присвоено значение <c>null</c>.</exception>
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public List<Item> Items
@@ -60,8 +60,6 @@ namespace ObjectOrientedPractics.View.Tabs
         /// <summary>
         /// Возвращает текст для отображения товара в списке.
         /// </summary>
-        /// <param name="item">Товар.</param>
-        /// <returns>Строка вида «Id. Название».</returns>
         private static string FormatItem(Item item)
         {
             return $"{item.Id}. {item.Name.ReplaceLineEndings(" ")}";
@@ -70,22 +68,10 @@ namespace ObjectOrientedPractics.View.Tabs
         /// <summary>
         /// Возвращает выбранный в списке товар.
         /// </summary>
-        /// <returns>Выбранный товар или <c>null</c>, если ничего не выбрано.</returns>
         private Item? GetSelectedItem()
         {
             int index = ItemsListBox.SelectedIndex;
             return index >= 0 && index < _items.Count ? _items[index] : null;
-        }
-
-        /// <summary>
-        /// Добавляет товар в список и выбирает его.
-        /// </summary>
-        /// <param name="item">Добавляемый товар.</param>
-        private void AddItem(Item item)
-        {
-            _items.Add(item);
-            ItemsListBox.Items.Add(FormatItem(item));
-            ItemsListBox.SelectedIndex = _items.Count - 1;
         }
 
         /// <summary>
@@ -102,7 +88,6 @@ namespace ObjectOrientedPractics.View.Tabs
                 {
                     ItemsListBox.Items.Add(FormatItem(item));
                 }
-
                 ItemsListBox.EndUpdate();
             }
             finally
@@ -121,11 +106,15 @@ namespace ObjectOrientedPractics.View.Tabs
         }
 
         /// <summary>
-        /// Обновляет строку выбранного товара в списке после изменения его названия.
+        /// Обновляет строку товара в списке после изменения его названия.
         /// </summary>
-        /// <param name="index">Индекс товара.</param>
         private void RefreshListBoxItem(int index)
         {
+            if (index < 0 || index >= _items.Count)
+            {
+                return;
+            }
+
             _isUpdating = true;
             try
             {
@@ -138,8 +127,7 @@ namespace ObjectOrientedPractics.View.Tabs
         }
 
         /// <summary>
-        /// Заполняет поля справа данными выбранного товара либо очищает их,
-        /// если товар не выбран.
+        /// Заполняет поля справа данными выбранного товара либо очищает их.
         /// </summary>
         private void UpdateSelectedItemInfo()
         {
@@ -148,7 +136,7 @@ namespace ObjectOrientedPractics.View.Tabs
             _isUpdating = true;
             try
             {
-                if (item is null)
+                if (item is null || _isAddingNew)
                 {
                     IdTextBox.Clear();
                     CostTextBox.Clear();
@@ -167,11 +155,15 @@ namespace ObjectOrientedPractics.View.Tabs
                 NameTextBox.BackColor = SystemColors.Window;
                 InfoTextBox.BackColor = SystemColors.Window;
 
-                bool hasSelection = item is not null;
+                bool hasSelection = item is not null && !_isAddingNew;
                 CostTextBox.Enabled = hasSelection;
                 NameTextBox.Enabled = hasSelection;
                 InfoTextBox.Enabled = hasSelection;
+
                 RemoveButton.Enabled = hasSelection;
+                EditButton.Enabled = hasSelection;
+
+                AddButton.Text = _isAddingNew ? "Save" : "Add";
             }
             finally
             {
@@ -180,16 +172,13 @@ namespace ObjectOrientedPractics.View.Tabs
         }
 
         /// <summary>
-        /// Пытается записать значение в выбранный товар и подсвечивает поле ввода
+        /// Пытается записать значение в выбранный товар и подсвечивает поле
         /// красным цветом, если значение не прошло проверку.
         /// </summary>
-        /// <param name="textBox">Поле ввода, из которого взято значение.</param>
-        /// <param name="assign">Действие, записывающее значение в товар.</param>
-        /// <returns><c>true</c>, если значение принято.</returns>
         private bool TryAssignValue(TextBox textBox, Action<Item> assign)
         {
             Item? item = GetSelectedItem();
-            if (_isUpdating || item is null)
+            if (_isUpdating || item is null || _isAddingNew)
             {
                 return false;
             }
@@ -208,32 +197,172 @@ namespace ObjectOrientedPractics.View.Tabs
         }
 
         /// <summary>
-        /// Добавляет новый товар со значениями по умолчанию и выбирает его в списке.
+        /// Проверяет корректность значений, введённых в поля справа.
         /// </summary>
-        /// <param name="sender">Источник события.</param>
-        /// <param name="e">Данные события.</param>
+        private bool ValidateInputs(out string name, out string info, out double cost)
+        {
+            bool isValid = true;
+            name = NameTextBox.Text;
+            info = InfoTextBox.Text;
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                NameTextBox.BackColor = _errorColor;
+                isValid = false;
+            }
+            else
+            {
+                NameTextBox.BackColor = SystemColors.Window;
+            }
+
+            if (!double.TryParse(CostTextBox.Text, NumberStyles.Float,
+                    CultureInfo.CurrentCulture, out cost) || cost < 0)
+            {
+                CostTextBox.BackColor = _errorColor;
+                isValid = false;
+            }
+            else
+            {
+                CostTextBox.BackColor = SystemColors.Window;
+            }
+
+            InfoTextBox.BackColor = SystemColors.Window;
+            return isValid;
+        }
+
+        /// <summary>
+        /// Включает режим добавления нового товара: очищает поля справа
+        /// и делает их доступными для ввода.
+        /// </summary>
+        private void StartAddingNew()
+        {
+            _isAddingNew = true;
+
+            _isUpdating = true;
+            try
+            {
+                ItemsListBox.ClearSelected();
+                IdTextBox.Clear();
+                NameTextBox.Clear();
+                InfoTextBox.Clear();
+                CostTextBox.Clear();
+
+                NameTextBox.BackColor = SystemColors.Window;
+                InfoTextBox.BackColor = SystemColors.Window;
+                CostTextBox.BackColor = SystemColors.Window;
+
+                NameTextBox.Enabled = true;
+                InfoTextBox.Enabled = true;
+                CostTextBox.Enabled = true;
+
+                RemoveButton.Enabled = false;
+                EditButton.Enabled = false;
+                AddButton.Text = "Save";
+            }
+            finally
+            {
+                _isUpdating = false;
+            }
+
+            NameTextBox.Focus();
+        }
+
+        /// <summary>
+        /// Выключает режим добавления нового товара.
+        /// </summary>
+        private void EndAddingNew()
+        {
+            _isAddingNew = false;
+            AddButton.Text = "Add";
+            UpdateSelectedItemInfo();
+        }
+
+        /// <summary>
+        /// Обрабатывает кнопку «Add»/«Save».
+        /// </summary>
         private void AddButton_Click(object? sender, EventArgs e)
         {
-            AddItem(new Item(DefaultItemName, string.Empty, 0));
+            if (!_isAddingNew)
+            {
+                StartAddingNew();
+                return;
+            }
+
+            if (!ValidateInputs(out string name, out string info, out double cost))
+            {
+                return;
+            }
+
+            var item = new Item(name, info, cost);
+            _items.Add(item);
+            ItemsListBox.Items.Add(FormatItem(item));
+
+            _isAddingNew = false;
+            AddButton.Text = "Add";
+
+            _isUpdating = true;
+            try
+            {
+                ItemsListBox.SelectedIndex = _items.Count - 1;
+            }
+            finally
+            {
+                _isUpdating = false;
+            }
+
+            UpdateSelectedItemInfo();
+        }
+
+        /// <summary>
+        /// Сохраняет изменения, введённые в поля выбранного товара.
+        /// </summary>
+        private void EditButton_Click(object? sender, EventArgs e)
+        {
+            Item? item = GetSelectedItem();
+            if (item is null || _isAddingNew)
+            {
+                return;
+            }
+
+            if (!ValidateInputs(out string name, out string info, out double cost))
+            {
+                return;
+            }
+
+            item.Name = name;
+            item.Info = info;
+            item.Cost = cost;
+
+            RefreshListBoxItem(ItemsListBox.SelectedIndex);
         }
 
         /// <summary>
         /// Добавляет случайно сгенерированный товар и выбирает его в списке.
         /// </summary>
-        /// <param name="sender">Источник события.</param>
-        /// <param name="e">Данные события.</param>
         private void GenerateButton_Click(object? sender, EventArgs e)
         {
-            AddItem(ItemFactory.CreateRandomItem());
+            if (_isAddingNew)
+            {
+                EndAddingNew();
+            }
+
+            Item item = ItemFactory.CreateRandomItem();
+            _items.Add(item);
+            ItemsListBox.Items.Add(FormatItem(item));
+            ItemsListBox.SelectedIndex = _items.Count - 1;
         }
 
         /// <summary>
         /// Удаляет выбранный товар из списка.
         /// </summary>
-        /// <param name="sender">Источник события.</param>
-        /// <param name="e">Данные события.</param>
         private void RemoveButton_Click(object? sender, EventArgs e)
         {
+            if (_isAddingNew)
+            {
+                EndAddingNew();
+                return;
+            }
+
             int index = ItemsListBox.SelectedIndex;
             if (index < 0)
             {
@@ -256,8 +385,6 @@ namespace ObjectOrientedPractics.View.Tabs
         /// <summary>
         /// Отображает данные выбранного товара в полях справа.
         /// </summary>
-        /// <param name="sender">Источник события.</param>
-        /// <param name="e">Данные события.</param>
         private void ItemsListBox_SelectedIndexChanged(object? sender, EventArgs e)
         {
             if (_isUpdating)
@@ -265,14 +392,15 @@ namespace ObjectOrientedPractics.View.Tabs
                 return;
             }
 
+            if (_isAddingNew && ItemsListBox.SelectedIndex >= 0)
+            {
+                _isAddingNew = false;
+                AddButton.Text = "Add";
+            }
+
             UpdateSelectedItemInfo();
         }
 
-        /// <summary>
-        /// Записывает введённое название в товар; при ошибке подсвечивает поле красным.
-        /// </summary>
-        /// <param name="sender">Источник события.</param>
-        /// <param name="e">Данные события.</param>
         private void NameTextBox_TextChanged(object? sender, EventArgs e)
         {
             if (TryAssignValue(NameTextBox, item => item.Name = NameTextBox.Text))
@@ -281,24 +409,14 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
-        /// <summary>
-        /// Записывает введённое описание в товар; при ошибке подсвечивает поле красным.
-        /// </summary>
-        /// <param name="sender">Источник события.</param>
-        /// <param name="e">Данные события.</param>
         private void InfoTextBox_TextChanged(object? sender, EventArgs e)
         {
             TryAssignValue(InfoTextBox, item => item.Info = InfoTextBox.Text);
         }
 
-        /// <summary>
-        /// Записывает введённую стоимость в товар; при ошибке подсвечивает поле красным.
-        /// </summary>
-        /// <param name="sender">Источник события.</param>
-        /// <param name="e">Данные события.</param>
         private void CostTextBox_TextChanged(object? sender, EventArgs e)
         {
-            if (_isUpdating)
+            if (_isUpdating || _isAddingNew)
             {
                 return;
             }

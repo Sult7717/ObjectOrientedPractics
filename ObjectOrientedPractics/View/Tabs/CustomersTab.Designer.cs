@@ -36,6 +36,7 @@ namespace ObjectOrientedPractics.View.Tabs
             this.ButtonsTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.AddButton = new System.Windows.Forms.Button();
             this.RemoveButton = new System.Windows.Forms.Button();
+            this.EditButton = new System.Windows.Forms.Button();
             this.GenerateButton = new System.Windows.Forms.Button();
             this.RightTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.SelectedCustomerTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -112,13 +113,15 @@ namespace ObjectOrientedPractics.View.Tabs
             // 
             // ButtonsTableLayoutPanel
             // 
-            this.ButtonsTableLayoutPanel.ColumnCount = 3;
-            this.ButtonsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.ButtonsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.ButtonsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.ButtonsTableLayoutPanel.ColumnCount = 4;
+            this.ButtonsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.ButtonsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.ButtonsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.ButtonsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.ButtonsTableLayoutPanel.Controls.Add(this.AddButton, 0, 0);
             this.ButtonsTableLayoutPanel.Controls.Add(this.RemoveButton, 1, 0);
-            this.ButtonsTableLayoutPanel.Controls.Add(this.GenerateButton, 2, 0);
+            this.ButtonsTableLayoutPanel.Controls.Add(this.EditButton, 2, 0);
+            this.ButtonsTableLayoutPanel.Controls.Add(this.GenerateButton, 3, 0);
             this.ButtonsTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ButtonsTableLayoutPanel.Location = new System.Drawing.Point(3, 437);
             this.ButtonsTableLayoutPanel.Name = "ButtonsTableLayoutPanel";
@@ -132,7 +135,7 @@ namespace ObjectOrientedPractics.View.Tabs
             this.AddButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AddButton.Location = new System.Drawing.Point(3, 3);
             this.AddButton.Name = "AddButton";
-            this.AddButton.Size = new System.Drawing.Size(93, 32);
+            this.AddButton.Size = new System.Drawing.Size(68, 32);
             this.AddButton.TabIndex = 0;
             this.AddButton.Text = "Add";
             this.AddButton.UseVisualStyleBackColor = true;
@@ -141,21 +144,32 @@ namespace ObjectOrientedPractics.View.Tabs
             // RemoveButton
             // 
             this.RemoveButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RemoveButton.Location = new System.Drawing.Point(102, 3);
+            this.RemoveButton.Location = new System.Drawing.Point(77, 3);
             this.RemoveButton.Name = "RemoveButton";
-            this.RemoveButton.Size = new System.Drawing.Size(93, 32);
+            this.RemoveButton.Size = new System.Drawing.Size(68, 32);
             this.RemoveButton.TabIndex = 1;
             this.RemoveButton.Text = "Remove";
             this.RemoveButton.UseVisualStyleBackColor = true;
             this.RemoveButton.Click += new System.EventHandler(this.RemoveButton_Click);
             // 
+            // EditButton
+            // 
+            this.EditButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.EditButton.Location = new System.Drawing.Point(151, 3);
+            this.EditButton.Name = "EditButton";
+            this.EditButton.Size = new System.Drawing.Size(68, 32);
+            this.EditButton.TabIndex = 2;
+            this.EditButton.Text = "Edit";
+            this.EditButton.UseVisualStyleBackColor = true;
+            this.EditButton.Click += new System.EventHandler(this.EditButton_Click);
+            // 
             // GenerateButton
             // 
             this.GenerateButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GenerateButton.Location = new System.Drawing.Point(201, 3);
+            this.GenerateButton.Location = new System.Drawing.Point(225, 3);
             this.GenerateButton.Name = "GenerateButton";
-            this.GenerateButton.Size = new System.Drawing.Size(95, 32);
-            this.GenerateButton.TabIndex = 2;
+            this.GenerateButton.Size = new System.Drawing.Size(71, 32);
+            this.GenerateButton.TabIndex = 3;
             this.GenerateButton.Text = "Generate";
             this.GenerateButton.UseVisualStyleBackColor = true;
             this.GenerateButton.Click += new System.EventHandler(this.GenerateButton_Click);
@@ -248,7 +262,6 @@ namespace ObjectOrientedPractics.View.Tabs
             this.FullnameTextBox.Name = "FullnameTextBox";
             this.FullnameTextBox.Size = new System.Drawing.Size(381, 23);
             this.FullnameTextBox.TabIndex = 4;
-            this.FullnameTextBox.TextChanged += new System.EventHandler(this.FullnameTextBox_TextChanged);
             // 
             // AddressLabel
             // 
@@ -270,7 +283,6 @@ namespace ObjectOrientedPractics.View.Tabs
             this.AddressTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.AddressTextBox.Size = new System.Drawing.Size(381, 103);
             this.AddressTextBox.TabIndex = 6;
-            this.AddressTextBox.TextChanged += new System.EventHandler(this.AddressTextBox_TextChanged);
             // 
             // ReservedPanel
             // 
@@ -295,7 +307,6 @@ namespace ObjectOrientedPractics.View.Tabs
             this.SelectedCustomerTableLayoutPanel.ResumeLayout(false);
             this.SelectedCustomerTableLayoutPanel.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
         #endregion
@@ -307,6 +318,7 @@ namespace ObjectOrientedPractics.View.Tabs
         private System.Windows.Forms.TableLayoutPanel ButtonsTableLayoutPanel;
         private System.Windows.Forms.Button AddButton;
         private System.Windows.Forms.Button RemoveButton;
+        private System.Windows.Forms.Button EditButton;
         private System.Windows.Forms.Button GenerateButton;
         private System.Windows.Forms.TableLayoutPanel RightTableLayoutPanel;
         private System.Windows.Forms.TableLayoutPanel SelectedCustomerTableLayoutPanel;
