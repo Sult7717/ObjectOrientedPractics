@@ -394,5 +394,10 @@ namespace ObjectOrientedPractics.View.Tabs
         {
             TryAssignValue(AddressTextBox, customer => customer.Address = AddressTextBox.Text);
         }
+
+        private void SelectedCustomerTableLayoutPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
