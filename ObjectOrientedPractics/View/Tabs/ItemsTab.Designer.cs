@@ -44,6 +44,8 @@ namespace ObjectOrientedPractics.View.Tabs
             IdTextBox = new TextBox();
             CostLabel = new Label();
             CostTextBox = new TextBox();
+            CategoryLabel = new Label();
+            CategoryComboBox = new ComboBox();
             NameLabel = new Label();
             NameTextBox = new TextBox();
             InfoLabel = new Label();
@@ -189,15 +191,18 @@ namespace ObjectOrientedPractics.View.Tabs
             SelectedItemTableLayoutPanel.Controls.Add(IdTextBox, 1, 1);
             SelectedItemTableLayoutPanel.Controls.Add(CostLabel, 0, 2);
             SelectedItemTableLayoutPanel.Controls.Add(CostTextBox, 1, 2);
-            SelectedItemTableLayoutPanel.Controls.Add(NameLabel, 0, 3);
-            SelectedItemTableLayoutPanel.Controls.Add(NameTextBox, 0, 4);
-            SelectedItemTableLayoutPanel.Controls.Add(InfoLabel, 0, 5);
-            SelectedItemTableLayoutPanel.Controls.Add(InfoTextBox, 0, 6);
+            SelectedItemTableLayoutPanel.Controls.Add(CategoryLabel, 0, 3);
+            SelectedItemTableLayoutPanel.Controls.Add(CategoryComboBox, 1, 3);
+            SelectedItemTableLayoutPanel.Controls.Add(NameLabel, 0, 4);
+            SelectedItemTableLayoutPanel.Controls.Add(NameTextBox, 0, 5);
+            SelectedItemTableLayoutPanel.Controls.Add(InfoLabel, 0, 6);
+            SelectedItemTableLayoutPanel.Controls.Add(InfoTextBox, 0, 7);
             SelectedItemTableLayoutPanel.Dock = DockStyle.Fill;
             SelectedItemTableLayoutPanel.Location = new Point(370, 15);
             SelectedItemTableLayoutPanel.Margin = new Padding(3, 4, 3, 4);
             SelectedItemTableLayoutPanel.Name = "SelectedItemTableLayoutPanel";
-            SelectedItemTableLayoutPanel.RowCount = 7;
+            SelectedItemTableLayoutPanel.RowCount = 8;
+            SelectedItemTableLayoutPanel.RowStyles.Add(new RowStyle());
             SelectedItemTableLayoutPanel.RowStyles.Add(new RowStyle());
             SelectedItemTableLayoutPanel.RowStyles.Add(new RowStyle());
             SelectedItemTableLayoutPanel.RowStyles.Add(new RowStyle());
@@ -234,7 +239,7 @@ namespace ObjectOrientedPractics.View.Tabs
             // IdTextBox
             // 
             IdTextBox.Anchor = AnchorStyles.Left;
-            IdTextBox.Location = new Point(50, 32);
+            IdTextBox.Location = new Point(80, 32);
             IdTextBox.Margin = new Padding(3, 4, 3, 4);
             IdTextBox.Name = "IdTextBox";
             IdTextBox.ReadOnly = true;
@@ -254,57 +259,82 @@ namespace ObjectOrientedPractics.View.Tabs
             // CostTextBox
             // 
             CostTextBox.Anchor = AnchorStyles.Left;
-            CostTextBox.Location = new Point(50, 67);
+            CostTextBox.Location = new Point(80, 67);
             CostTextBox.Margin = new Padding(3, 4, 3, 4);
             CostTextBox.Name = "CostTextBox";
             CostTextBox.Size = new Size(159, 27);
             CostTextBox.TabIndex = 4;
+            CostTextBox.TextChanged += CostTextBox_TextChanged;
+            // 
+            // CategoryLabel
+            // 
+            CategoryLabel.Anchor = AnchorStyles.Left;
+            CategoryLabel.AutoSize = true;
+            CategoryLabel.Location = new Point(3, 105);
+            CategoryLabel.Name = "CategoryLabel";
+            CategoryLabel.Size = new Size(71, 20);
+            CategoryLabel.TabIndex = 5;
+            CategoryLabel.Text = "Category:";
+            // 
+            // CategoryComboBox
+            // 
+            CategoryComboBox.Anchor = AnchorStyles.Left;
+            CategoryComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            CategoryComboBox.FormattingEnabled = true;
+            CategoryComboBox.Location = new Point(80, 102);
+            CategoryComboBox.Margin = new Padding(3, 4, 3, 4);
+            CategoryComboBox.Name = "CategoryComboBox";
+            CategoryComboBox.Size = new Size(159, 28);
+            CategoryComboBox.TabIndex = 6;
+            CategoryComboBox.SelectedIndexChanged += CategoryComboBox_SelectedIndexChanged;
             // 
             // NameLabel
             // 
             NameLabel.Anchor = AnchorStyles.Left;
             NameLabel.AutoSize = true;
             SelectedItemTableLayoutPanel.SetColumnSpan(NameLabel, 2);
-            NameLabel.Location = new Point(3, 98);
+            NameLabel.Location = new Point(3, 134);
             NameLabel.Name = "NameLabel";
             NameLabel.Size = new Size(52, 20);
-            NameLabel.TabIndex = 5;
+            NameLabel.TabIndex = 7;
             NameLabel.Text = "Name:";
             // 
             // NameTextBox
             // 
             SelectedItemTableLayoutPanel.SetColumnSpan(NameTextBox, 2);
             NameTextBox.Dock = DockStyle.Fill;
-            NameTextBox.Location = new Point(3, 122);
+            NameTextBox.Location = new Point(3, 158);
             NameTextBox.Margin = new Padding(3, 4, 3, 4);
             NameTextBox.Multiline = true;
             NameTextBox.Name = "NameTextBox";
             NameTextBox.ScrollBars = ScrollBars.Vertical;
-            NameTextBox.Size = new Size(526, 166);
-            NameTextBox.TabIndex = 6;
+            NameTextBox.Size = new Size(526, 153);
+            NameTextBox.TabIndex = 8;
+            NameTextBox.TextChanged += NameTextBox_TextChanged;
             // 
             // InfoLabel
             // 
             InfoLabel.Anchor = AnchorStyles.Left;
             InfoLabel.AutoSize = true;
             SelectedItemTableLayoutPanel.SetColumnSpan(InfoLabel, 2);
-            InfoLabel.Location = new Point(3, 292);
+            InfoLabel.Location = new Point(3, 315);
             InfoLabel.Name = "InfoLabel";
             InfoLabel.Size = new Size(88, 20);
-            InfoLabel.TabIndex = 7;
+            InfoLabel.TabIndex = 9;
             InfoLabel.Text = "Description:";
             // 
             // InfoTextBox
             // 
             SelectedItemTableLayoutPanel.SetColumnSpan(InfoTextBox, 2);
             InfoTextBox.Dock = DockStyle.Fill;
-            InfoTextBox.Location = new Point(3, 316);
+            InfoTextBox.Location = new Point(3, 339);
             InfoTextBox.Margin = new Padding(3, 4, 3, 4);
             InfoTextBox.Multiline = true;
             InfoTextBox.Name = "InfoTextBox";
             InfoTextBox.ScrollBars = ScrollBars.Vertical;
-            InfoTextBox.Size = new Size(526, 317);
-            InfoTextBox.TabIndex = 8;
+            InfoTextBox.Size = new Size(526, 294);
+            InfoTextBox.TabIndex = 10;
+            InfoTextBox.TextChanged += InfoTextBox_TextChanged;
             // 
             // ItemsTab
             // 
@@ -340,6 +370,8 @@ namespace ObjectOrientedPractics.View.Tabs
         private System.Windows.Forms.TextBox IdTextBox;
         private System.Windows.Forms.Label CostLabel;
         private System.Windows.Forms.TextBox CostTextBox;
+        private System.Windows.Forms.Label CategoryLabel;
+        private System.Windows.Forms.ComboBox CategoryComboBox;
         private System.Windows.Forms.Label NameLabel;
         private System.Windows.Forms.TextBox NameTextBox;
         private System.Windows.Forms.Label InfoLabel;

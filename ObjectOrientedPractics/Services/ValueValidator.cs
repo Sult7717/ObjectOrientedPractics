@@ -31,7 +31,7 @@
         }
 
         /// <summary>
-        /// Проверяет, что число находится в заданном диапазоне (границы включаются).
+        /// Проверяет, что вещественное число находится в заданном диапазоне (границы включаются).
         /// </summary>
         /// <param name="value">Проверяемое число.</param>
         /// <param name="minValue">Минимально допустимое значение.</param>
@@ -44,6 +44,24 @@
         {
             // Сравнение записано в «положительной» форме, чтобы NaN тоже считался ошибкой.
             if (!(value >= minValue && value <= maxValue))
+            {
+                throw new ArgumentException($"{propertyName} должен быть в диапазоне от {minValue} до {maxValue}");
+            }
+        }
+
+        /// <summary>
+        /// Проверяет, что целое число находится в заданном диапазоне (границы включаются).
+        /// </summary>
+        /// <param name="value">Проверяемое целое число.</param>
+        /// <param name="minValue">Минимально допустимое значение.</param>
+        /// <param name="maxValue">Максимально допустимое значение.</param>
+        /// <param name="propertyName">Имя свойства, в котором выполняется проверка.</param>
+        /// <exception cref="ArgumentException">
+        /// Число выходит за границы диапазона.
+        /// </exception>
+        public static void AssertValueInRange(int value, int minValue, int maxValue, string propertyName)
+        {
+            if (value < minValue || value > maxValue)
             {
                 throw new ArgumentException($"{propertyName} должен быть в диапазоне от {minValue} до {maxValue}");
             }

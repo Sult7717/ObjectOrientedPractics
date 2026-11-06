@@ -1,4 +1,6 @@
 ﻿#nullable disable
+using ObjectOrientedPractics.View.Controls;
+
 namespace ObjectOrientedPractics.View.Tabs
 {
     partial class CustomersTab
@@ -45,8 +47,7 @@ namespace ObjectOrientedPractics.View.Tabs
             IdTextBox = new TextBox();
             FullnameLabel = new Label();
             FullnameTextBox = new TextBox();
-            AddressLabel = new Label();
-            AddressTextBox = new TextBox();
+            CustomerAddressControl = new AddressControl();
             ReservedPanel = new Panel();
             MainTableLayoutPanel.SuspendLayout();
             CustomersTableLayoutPanel.SuspendLayout();
@@ -191,13 +192,14 @@ namespace ObjectOrientedPractics.View.Tabs
             RightTableLayoutPanel.Margin = new Padding(3, 4, 3, 4);
             RightTableLayoutPanel.Name = "RightTableLayoutPanel";
             RightTableLayoutPanel.RowCount = 2;
-            RightTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
-            RightTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 60F));
+            RightTableLayoutPanel.RowStyles.Add(new RowStyle());
+            RightTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             RightTableLayoutPanel.Size = new Size(532, 637);
             RightTableLayoutPanel.TabIndex = 1;
             // 
             // SelectedCustomerTableLayoutPanel
             // 
+            SelectedCustomerTableLayoutPanel.AutoSize = true;
             SelectedCustomerTableLayoutPanel.ColumnCount = 2;
             SelectedCustomerTableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
             SelectedCustomerTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
@@ -206,8 +208,7 @@ namespace ObjectOrientedPractics.View.Tabs
             SelectedCustomerTableLayoutPanel.Controls.Add(IdTextBox, 1, 1);
             SelectedCustomerTableLayoutPanel.Controls.Add(FullnameLabel, 0, 2);
             SelectedCustomerTableLayoutPanel.Controls.Add(FullnameTextBox, 1, 2);
-            SelectedCustomerTableLayoutPanel.Controls.Add(AddressLabel, 0, 3);
-            SelectedCustomerTableLayoutPanel.Controls.Add(AddressTextBox, 1, 3);
+            SelectedCustomerTableLayoutPanel.Controls.Add(CustomerAddressControl, 0, 3);
             SelectedCustomerTableLayoutPanel.Dock = DockStyle.Fill;
             SelectedCustomerTableLayoutPanel.Location = new Point(3, 4);
             SelectedCustomerTableLayoutPanel.Margin = new Padding(3, 4, 3, 4);
@@ -216,10 +217,9 @@ namespace ObjectOrientedPractics.View.Tabs
             SelectedCustomerTableLayoutPanel.RowStyles.Add(new RowStyle());
             SelectedCustomerTableLayoutPanel.RowStyles.Add(new RowStyle());
             SelectedCustomerTableLayoutPanel.RowStyles.Add(new RowStyle());
-            SelectedCustomerTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            SelectedCustomerTableLayoutPanel.Size = new Size(526, 246);
+            SelectedCustomerTableLayoutPanel.RowStyles.Add(new RowStyle());
+            SelectedCustomerTableLayoutPanel.Size = new Size(526, 290);
             SelectedCustomerTableLayoutPanel.TabIndex = 0;
-            SelectedCustomerTableLayoutPanel.Paint += SelectedCustomerTableLayoutPanel_Paint;
             // 
             // SelectedCustomerLabel
             // 
@@ -272,35 +272,25 @@ namespace ObjectOrientedPractics.View.Tabs
             FullnameTextBox.Name = "FullnameTextBox";
             FullnameTextBox.Size = new Size(435, 27);
             FullnameTextBox.TabIndex = 4;
+            FullnameTextBox.TextChanged += FullnameTextBox_TextChanged;
             // 
-            // AddressLabel
+            // CustomerAddressControl
             // 
-            AddressLabel.AutoSize = true;
-            AddressLabel.Location = new Point(3, 107);
-            AddressLabel.Margin = new Padding(3, 9, 3, 0);
-            AddressLabel.Name = "AddressLabel";
-            AddressLabel.Size = new Size(65, 20);
-            AddressLabel.TabIndex = 5;
-            AddressLabel.Text = "Address:";
-            // 
-            // AddressTextBox
-            // 
-            AddressTextBox.Dock = DockStyle.Fill;
-            AddressTextBox.Location = new Point(88, 102);
-            AddressTextBox.Margin = new Padding(3, 4, 3, 4);
-            AddressTextBox.Multiline = true;
-            AddressTextBox.Name = "AddressTextBox";
-            AddressTextBox.ScrollBars = ScrollBars.Vertical;
-            AddressTextBox.Size = new Size(435, 140);
-            AddressTextBox.TabIndex = 6;
+            SelectedCustomerTableLayoutPanel.SetColumnSpan(CustomerAddressControl, 2);
+            CustomerAddressControl.Dock = DockStyle.Fill;
+            CustomerAddressControl.Location = new Point(0, 102);
+            CustomerAddressControl.Margin = new Padding(0, 4, 0, 4);
+            CustomerAddressControl.Name = "CustomerAddressControl";
+            CustomerAddressControl.Size = new Size(526, 180);
+            CustomerAddressControl.TabIndex = 5;
             // 
             // ReservedPanel
             // 
             ReservedPanel.Dock = DockStyle.Fill;
-            ReservedPanel.Location = new Point(3, 258);
+            ReservedPanel.Location = new Point(3, 302);
             ReservedPanel.Margin = new Padding(3, 4, 3, 4);
             ReservedPanel.Name = "ReservedPanel";
-            ReservedPanel.Size = new Size(526, 375);
+            ReservedPanel.Size = new Size(526, 331);
             ReservedPanel.TabIndex = 1;
             // 
             // CustomersTab
@@ -316,6 +306,7 @@ namespace ObjectOrientedPractics.View.Tabs
             CustomersTableLayoutPanel.PerformLayout();
             ButtonsTableLayoutPanel.ResumeLayout(false);
             RightTableLayoutPanel.ResumeLayout(false);
+            RightTableLayoutPanel.PerformLayout();
             SelectedCustomerTableLayoutPanel.ResumeLayout(false);
             SelectedCustomerTableLayoutPanel.PerformLayout();
             ResumeLayout(false);
@@ -339,8 +330,7 @@ namespace ObjectOrientedPractics.View.Tabs
         private System.Windows.Forms.TextBox IdTextBox;
         private System.Windows.Forms.Label FullnameLabel;
         private System.Windows.Forms.TextBox FullnameTextBox;
-        private System.Windows.Forms.Label AddressLabel;
-        private System.Windows.Forms.TextBox AddressTextBox;
+        private AddressControl CustomerAddressControl;
         private System.Windows.Forms.Panel ReservedPanel;
     }
 }

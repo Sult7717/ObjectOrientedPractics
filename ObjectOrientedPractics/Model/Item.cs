@@ -4,7 +4,7 @@ using ObjectOrientedPractics.Services;
 namespace ObjectOrientedPractics.Model
 {
     /// <summary>
-    /// Товар: хранит уникальный номер, название, описание и стоимость.
+    /// Товар: хранит уникальный номер, название, описание, стоимость и категорию.
     /// </summary>
     public class Item
     {
@@ -97,18 +97,25 @@ namespace ObjectOrientedPractics.Model
         }
 
         /// <summary>
+        /// Возвращает или задаёт категорию товара.
+        /// </summary>
+        public Category Category { get; set; }
+
+        /// <summary>
         /// Создаёт новый товар с уникальным номером.
         /// </summary>
         /// <param name="name">Название товара.</param>
         /// <param name="info">Описание товара.</param>
         /// <param name="cost">Стоимость товара.</param>
+        /// <param name="category">Категория товара.</param>
         /// <exception cref="ArgumentException">Одно из значений не прошло проверку.</exception>
-        public Item(string name, string info, double cost)
+        public Item(string name, string info, double cost, Category category)
         {
             // Номер выдаётся после проверки значений, чтобы при ошибке не терять идентификаторы.
             Name = name;
             Info = info;
             Cost = cost;
+            Category = category;
             _id = IdGenerator.GetNextId();
         }
 
@@ -119,13 +126,15 @@ namespace ObjectOrientedPractics.Model
         /// <param name="name">Название товара.</param>
         /// <param name="info">Описание товара.</param>
         /// <param name="cost">Стоимость товара.</param>
+        /// <param name="category">Категория товара.</param>
         /// <exception cref="ArgumentException">Одно из значений не прошло проверку.</exception>
         [JsonConstructor]
-        private Item(int id, string name, string info, double cost)
+        private Item(int id, string name, string info, double cost, Category category)
         {
             Name = name;
             Info = info;
             Cost = cost;
+            Category = category;
             _id = id;
         }
     }

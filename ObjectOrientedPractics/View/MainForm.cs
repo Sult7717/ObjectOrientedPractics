@@ -1,4 +1,5 @@
-﻿using ObjectOrientedPractics.Services;
+﻿using ObjectOrientedPractics.Model;
+using ObjectOrientedPractics.Services;
 
 namespace ObjectOrientedPractics.View
 {
@@ -13,12 +14,34 @@ namespace ObjectOrientedPractics.View
         private const string IconResourceName = "AppIcon.ico";
 
         /// <summary>
-        /// Создаёт главное окно.
+        /// Хранилище данных приложения (товары и покупатели).
+        /// </summary>
+        private Store _store = new();
+
+        /// <summary>
+        /// Создаёт главное окно, загружает данные магазина и передаёт их на вкладки.
         /// </summary>
         public MainForm()
         {
             InitializeComponent();
             LoadIcon();
+
+            try
+            {
+                _store = StoreSerializer.Load();
+            }
+            catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException)
+            {
+                _store = new Store();
+                MessageBox.Show(
+                    $"Не удалось загрузить данные:\n{ex.Message}",
+                    Text,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+
+            ItemsView.Items = _store.Items;
+            CustomersView.Customers = _store.Customers;
         }
 
         /// <summary>
@@ -34,30 +57,7 @@ namespace ObjectOrientedPractics.View
         }
 
         /// <summary>
-        /// Загружает сохранённые данные при открытии окна.
-        /// </summary>
-        /// <param name="sender">Источник события.</param>
-        /// <param name="e">Данные события.</param>
-        private void MainForm_Load(object? sender, EventArgs e)
-        {
-            try
-            {
-                ProjectData data = ProjectSerializer.Load();
-                ItemsView.Items = data.Items;
-                CustomersView.Customers = data.Customers;
-            }
-            catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException)
-            {
-                MessageBox.Show(
-                    $"Не удалось загрузить данные:\n{ex.Message}",
-                    Text,
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-            }
-        }
-
-        /// <summary>
-        /// Сохраняет данные при закрытии окна.
+        /// Сохраняет данные магазина при закрытии окна.
         /// </summary>
         /// <param name="sender">Источник события.</param>
         /// <param name="e">Данные события.</param>
@@ -65,12 +65,7 @@ namespace ObjectOrientedPractics.View
         {
             try
             {
-                var data = new ProjectData
-                {
-                    Items = ItemsView.Items,
-                    Customers = CustomersView.Customers
-                };
-                ProjectSerializer.Save(data);
+                StoreSerializer.Save(_store);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {

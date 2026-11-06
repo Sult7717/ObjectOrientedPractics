@@ -49,11 +49,17 @@ namespace ObjectOrientedPractics.View.Tabs
         }
 
         /// <summary>
-        /// Создаёт вкладку товаров.
+        /// Создаёт вкладку товаров и инициализирует выпадающий список категорий.
         /// </summary>
         public ItemsTab()
         {
             InitializeComponent();
+
+            foreach (object category in Enum.GetValues(typeof(Category)))
+            {
+                CategoryComboBox.Items.Add(category);
+            }
+
             UpdateSelectedItemInfo();
         }
 
@@ -140,6 +146,7 @@ namespace ObjectOrientedPractics.View.Tabs
                 {
                     IdTextBox.Clear();
                     CostTextBox.Clear();
+                    CategoryComboBox.SelectedIndex = _isAddingNew && CategoryComboBox.Items.Count > 0 ? 0 : -1;
                     NameTextBox.Clear();
                     InfoTextBox.Clear();
                 }
@@ -147,6 +154,7 @@ namespace ObjectOrientedPractics.View.Tabs
                 {
                     IdTextBox.Text = item.Id.ToString(CultureInfo.CurrentCulture);
                     CostTextBox.Text = item.Cost.ToString(CultureInfo.CurrentCulture);
+                    CategoryComboBox.SelectedItem = item.Category;
                     NameTextBox.Text = item.Name;
                     InfoTextBox.Text = item.Info;
                 }
@@ -157,6 +165,7 @@ namespace ObjectOrientedPractics.View.Tabs
 
                 bool hasSelection = item is not null && !_isAddingNew;
                 CostTextBox.Enabled = hasSelection;
+                CategoryComboBox.Enabled = hasSelection;
                 NameTextBox.Enabled = hasSelection;
                 InfoTextBox.Enabled = hasSelection;
 
@@ -199,13 +208,16 @@ namespace ObjectOrientedPractics.View.Tabs
         /// <summary>
         /// Проверяет корректность значений, введённых в поля справа.
         /// </summary>
-        private bool ValidateInputs(out string name, out string info, out double cost)
+        private bool ValidateInputs(out string name, out string info, out double cost, out Category category)
         {
             bool isValid = true;
             name = NameTextBox.Text;
             info = InfoTextBox.Text;
+            category = CategoryComboBox.SelectedItem is Category selectedCategory
+                ? selectedCategory
+                : Category.Electronics;
 
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name) || name.Length > Item.MaxNameLength)
             {
                 NameTextBox.BackColor = _errorColor;
                 isValid = false;
@@ -215,8 +227,18 @@ namespace ObjectOrientedPractics.View.Tabs
                 NameTextBox.BackColor = SystemColors.Window;
             }
 
+            if (info.Length > Item.MaxInfoLength)
+            {
+                InfoTextBox.BackColor = _errorColor;
+                isValid = false;
+            }
+            else
+            {
+                InfoTextBox.BackColor = SystemColors.Window;
+            }
+
             if (!double.TryParse(CostTextBox.Text, NumberStyles.Float,
-                    CultureInfo.CurrentCulture, out cost) || cost < 0)
+                    CultureInfo.CurrentCulture, out cost) || cost < Item.MinCost || cost > Item.MaxCost)
             {
                 CostTextBox.BackColor = _errorColor;
                 isValid = false;
@@ -226,7 +248,11 @@ namespace ObjectOrientedPractics.View.Tabs
                 CostTextBox.BackColor = SystemColors.Window;
             }
 
-            InfoTextBox.BackColor = SystemColors.Window;
+            if (CategoryComboBox.SelectedItem is not Category)
+            {
+                isValid = false;
+            }
+
             return isValid;
         }
 
@@ -246,6 +272,10 @@ namespace ObjectOrientedPractics.View.Tabs
                 NameTextBox.Clear();
                 InfoTextBox.Clear();
                 CostTextBox.Clear();
+                if (CategoryComboBox.Items.Count > 0)
+                {
+                    CategoryComboBox.SelectedIndex = 0;
+                }
 
                 NameTextBox.BackColor = SystemColors.Window;
                 InfoTextBox.BackColor = SystemColors.Window;
@@ -254,6 +284,7 @@ namespace ObjectOrientedPractics.View.Tabs
                 NameTextBox.Enabled = true;
                 InfoTextBox.Enabled = true;
                 CostTextBox.Enabled = true;
+                CategoryComboBox.Enabled = true;
 
                 RemoveButton.Enabled = false;
                 EditButton.Enabled = false;
@@ -288,12 +319,12 @@ namespace ObjectOrientedPractics.View.Tabs
                 return;
             }
 
-            if (!ValidateInputs(out string name, out string info, out double cost))
+            if (!ValidateInputs(out string name, out string info, out double cost, out Category category))
             {
                 return;
             }
 
-            var item = new Item(name, info, cost);
+            var item = new Item(name, info, cost, category);
             _items.Add(item);
             ItemsListBox.Items.Add(FormatItem(item));
 
@@ -324,7 +355,7 @@ namespace ObjectOrientedPractics.View.Tabs
                 return;
             }
 
-            if (!ValidateInputs(out string name, out string info, out double cost))
+            if (!ValidateInputs(out string name, out string info, out double cost, out Category category))
             {
                 return;
             }
@@ -332,6 +363,7 @@ namespace ObjectOrientedPractics.View.Tabs
             item.Name = name;
             item.Info = info;
             item.Cost = cost;
+            item.Category = category;
 
             RefreshListBoxItem(ItemsListBox.SelectedIndex);
         }
@@ -399,6 +431,23 @@ namespace ObjectOrientedPractics.View.Tabs
             }
 
             UpdateSelectedItemInfo();
+        }
+
+        /// <summary>
+        /// Присваивает выбранную в выпадающем списке категорию текущему выбранному товару.
+        /// </summary>
+        private void CategoryComboBox_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            Item? item = GetSelectedItem();
+            if (_isUpdating || item is null || _isAddingNew)
+            {
+                return;
+            }
+
+            if (CategoryComboBox.SelectedItem is Category selectedCategory)
+            {
+                item.Category = selectedCategory;
+            }
         }
 
         private void NameTextBox_TextChanged(object? sender, EventArgs e)

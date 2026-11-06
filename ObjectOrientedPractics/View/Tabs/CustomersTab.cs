@@ -140,21 +140,24 @@ namespace ObjectOrientedPractics.View.Tabs
                 {
                     IdTextBox.Clear();
                     FullnameTextBox.Clear();
-                    AddressTextBox.Clear();
+                    CustomerAddressControl.Address = new Address();
+                    if (!_isAddingNew)
+                    {
+                        CustomerAddressControl.Clear();
+                    }
                 }
                 else
                 {
                     IdTextBox.Text = customer.Id.ToString(CultureInfo.CurrentCulture);
                     FullnameTextBox.Text = customer.Fullname;
-                    AddressTextBox.Text = customer.Address;
+                    CustomerAddressControl.Address = customer.Address;
                 }
 
                 FullnameTextBox.BackColor = SystemColors.Window;
-                AddressTextBox.BackColor = SystemColors.Window;
 
                 bool hasSelection = customer is not null && !_isAddingNew;
                 FullnameTextBox.Enabled = hasSelection;
-                AddressTextBox.Enabled = hasSelection;
+                CustomerAddressControl.Enabled = hasSelection;
 
                 RemoveButton.Enabled = hasSelection;
                 EditButton.Enabled = hasSelection;
@@ -195,13 +198,12 @@ namespace ObjectOrientedPractics.View.Tabs
         /// <summary>
         /// Проверяет корректность значений, введённых в поля справа.
         /// </summary>
-        private bool ValidateInputs(out string fullname, out string address)
+        private bool ValidateInputs(out string fullname)
         {
             bool isValid = true;
             fullname = FullnameTextBox.Text;
-            address = AddressTextBox.Text;
 
-            if (string.IsNullOrWhiteSpace(fullname))
+            if (string.IsNullOrWhiteSpace(fullname) || fullname.Length > Customer.MaxFullnameLength)
             {
                 FullnameTextBox.BackColor = _errorColor;
                 isValid = false;
@@ -211,7 +213,11 @@ namespace ObjectOrientedPractics.View.Tabs
                 FullnameTextBox.BackColor = SystemColors.Window;
             }
 
-            AddressTextBox.BackColor = SystemColors.Window;
+            if (!CustomerAddressControl.ValidateAddress())
+            {
+                isValid = false;
+            }
+
             return isValid;
         }
 
@@ -229,13 +235,12 @@ namespace ObjectOrientedPractics.View.Tabs
                 CustomersListBox.ClearSelected();
                 IdTextBox.Clear();
                 FullnameTextBox.Clear();
-                AddressTextBox.Clear();
+                CustomerAddressControl.Address = new Address();
 
                 FullnameTextBox.BackColor = SystemColors.Window;
-                AddressTextBox.BackColor = SystemColors.Window;
 
                 FullnameTextBox.Enabled = true;
-                AddressTextBox.Enabled = true;
+                CustomerAddressControl.Enabled = true;
 
                 RemoveButton.Enabled = false;
                 EditButton.Enabled = false;
@@ -270,11 +275,12 @@ namespace ObjectOrientedPractics.View.Tabs
                 return;
             }
 
-            if (!ValidateInputs(out string fullname, out string address))
+            if (!ValidateInputs(out string fullname))
             {
                 return;
             }
 
+            Address address = CustomerAddressControl.Address;
             var customer = new Customer(fullname, address);
             _customers.Add(customer);
             CustomersListBox.Items.Add(FormatCustomer(customer));
@@ -306,13 +312,13 @@ namespace ObjectOrientedPractics.View.Tabs
                 return;
             }
 
-            if (!ValidateInputs(out string fullname, out string address))
+            if (!ValidateInputs(out string fullname))
             {
                 return;
             }
 
             customer.Fullname = fullname;
-            customer.Address = address;
+            customer.Address = CustomerAddressControl.Address;
 
             RefreshListBoxItem(CustomersListBox.SelectedIndex);
         }
@@ -388,16 +394,6 @@ namespace ObjectOrientedPractics.View.Tabs
             {
                 RefreshListBoxItem(CustomersListBox.SelectedIndex);
             }
-        }
-
-        private void AddressTextBox_TextChanged(object? sender, EventArgs e)
-        {
-            TryAssignValue(AddressTextBox, customer => customer.Address = AddressTextBox.Text);
-        }
-
-        private void SelectedCustomerTableLayoutPanel_Paint(object sender, PaintEventArgs e)
-        {
-
         }
     }
 }

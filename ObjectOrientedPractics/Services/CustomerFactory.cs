@@ -57,11 +57,11 @@ namespace ObjectOrientedPractics.Services
         /// <summary>
         /// Города с почтовыми индексами.
         /// </summary>
-        private static readonly (string Index, string City)[] _cities =
+        private static readonly (int Index, string City)[] _cities =
         {
-            ("101000", "Москва"), ("190000", "Санкт-Петербург"), ("630099", "Новосибирск"),
-            ("620014", "Екатеринбург"), ("420111", "Казань"), ("603000", "Нижний Новгород"),
-            ("634050", "Томск"), ("443010", "Самара"), ("344002", "Ростов-на-Дону")
+            (101000, "Москва"), (190000, "Санкт-Петербург"), (630099, "Новосибирск"),
+            (620014, "Екатеринбург"), (420111, "Казань"), (603000, "Нижний Новгород"),
+            (634050, "Томск"), (443010, "Самара"), (344002, "Ростов-на-Дону")
         };
 
         /// <summary>
@@ -99,11 +99,11 @@ namespace ObjectOrientedPractics.Services
 
             var city = _cities[random.Next(_cities.Length)];
             string street = _streets[random.Next(_streets.Length)];
-            int house = random.Next(1, 150);
-            int flat = random.Next(1, 300);
+            string house = random.Next(1, 150).ToString();
+            string flat = random.Next(1, 300).ToString();
 
             string fullname = $"{surname} {name} {patronymic}";
-            string address = $"{city.Index}, г. {city.City}, ул. {street}, д. {house}, кв. {flat}";
+            var address = new Address(city.Index, "Россия", city.City, street, house, flat);
             return new Customer(fullname, address);
         }
     }

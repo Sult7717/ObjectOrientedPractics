@@ -14,11 +14,6 @@ namespace ObjectOrientedPractics.Model
         public const int MaxFullnameLength = 200;
 
         /// <summary>
-        /// Максимальная длина адреса доставки.
-        /// </summary>
-        public const int MaxAddressLength = 500;
-
-        /// <summary>
         /// Уникальный номер покупателя.
         /// </summary>
         private readonly int _id;
@@ -29,9 +24,9 @@ namespace ObjectOrientedPractics.Model
         private string _fullname = string.Empty;
 
         /// <summary>
-        /// Адрес доставки.
+        /// Адрес доставки покупателя.
         /// </summary>
-        private string _address = string.Empty;
+        private Address _address = new();
 
         /// <summary>
         /// Возвращает уникальный номер покупателя.
@@ -54,31 +49,60 @@ namespace ObjectOrientedPractics.Model
         }
 
         /// <summary>
-        /// Возвращает или задаёт адрес доставки.
-        /// Длина — не более <see cref="MaxAddressLength"/> символов.
+        /// Возвращает или задаёт адрес доставки покупателя.
         /// </summary>
-        /// <exception cref="ArgumentException">Адрес превышает допустимую длину или равен <c>null</c>.</exception>
-        public string Address
+        /// <exception cref="ArgumentNullException">Адрес равен <c>null</c>.</exception>
+        public Address Address
         {
             get => _address;
             set
             {
-                ValueValidator.AssertStringOnLength(value, MaxAddressLength, nameof(Address));
+                ArgumentNullException.ThrowIfNull(value);
                 _address = value;
             }
         }
 
         /// <summary>
-        /// Создаёт нового покупателя с уникальным номером.
+        /// Создаёт нового покупателя с пустым адресом доставки и уникальным номером.
+        /// </summary>
+        /// <param name="fullname">Полное имя покупателя.</param>
+        /// <exception cref="ArgumentException">Имя не прошло проверку.</exception>
+        public Customer(string fullname)
+        {
+            Fullname = fullname;
+            Address = new Address();
+            _id = IdGenerator.GetNextId();
+        }
+
+        /// <summary>
+        /// Создаёт нового покупателя с указанным адресом доставки и уникальным номером.
         /// </summary>
         /// <param name="fullname">Полное имя покупателя.</param>
         /// <param name="address">Адрес доставки.</param>
         /// <exception cref="ArgumentException">Одно из значений не прошло проверку.</exception>
-        public Customer(string fullname, string address)
+        public Customer(string fullname, Address address)
         {
             // Номер выдаётся после проверки значений, чтобы при ошибке не терять идентификаторы.
             Fullname = fullname;
             Address = address;
+            _id = IdGenerator.GetNextId();
+        }
+
+        /// <summary>
+        /// Создаёт нового покупателя с указанными параметрами адреса и уникальным номером.
+        /// </summary>
+        /// <param name="fullname">Полное имя покупателя.</param>
+        /// <param name="index">Почтовый индекс.</param>
+        /// <param name="country">Страна или регион.</param>
+        /// <param name="city">Город.</param>
+        /// <param name="street">Улица.</param>
+        /// <param name="building">Номер дома.</param>
+        /// <param name="apartment">Номер квартиры.</param>
+        /// <exception cref="ArgumentException">Одно из значений не прошло проверку.</exception>
+        public Customer(string fullname, int index, string country, string city, string street, string building, string apartment)
+        {
+            Fullname = fullname;
+            Address = new Address(index, country, city, street, building, apartment);
             _id = IdGenerator.GetNextId();
         }
 
@@ -90,10 +114,10 @@ namespace ObjectOrientedPractics.Model
         /// <param name="address">Адрес доставки.</param>
         /// <exception cref="ArgumentException">Одно из значений не прошло проверку.</exception>
         [JsonConstructor]
-        private Customer(int id, string fullname, string address)
+        private Customer(int id, string fullname, Address? address)
         {
             Fullname = fullname;
-            Address = address;
+            Address = address ?? new Address();
             _id = id;
         }
     }
